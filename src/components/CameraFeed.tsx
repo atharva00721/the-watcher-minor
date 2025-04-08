@@ -65,7 +65,10 @@ export default function CameraFeed() {
   const [violenceDetected, setViolenceDetected] = useState(false);
   const [violenceFrames, setViolenceFrames] = useState<string[]>([]);
   const [violenceScores, setViolenceScores] = useState<number[]>([]);
-  const [violenceReports, setViolenceReports] = useState<ViolenceReport[]>([]);
+  const [violenceReports, setViolenceReports] = useState<
+    (ViolenceReport | null)[]
+  >([]);
+
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   const violenceDetectionTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -580,9 +583,11 @@ export default function CameraFeed() {
         <div className="w-full">
           <h3 className="text-lg font-semibold mb-2">Violence Reports</h3>
           <ViolenceReportsList
-            reports={violenceReports}
+            reports={violenceReports.filter(
+              (report): report is ViolenceReport => report !== null
+            )}
             onDeleteReport={(id) =>
-              setViolenceReports((prev) => prev.filter((r) => r.id !== id))
+              setViolenceReports((prev) => prev.filter((r) => r?.id !== id))
             }
           />
         </div>

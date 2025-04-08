@@ -153,11 +153,13 @@ const Expandable = React.forwardRef<HTMLDivElement, ExpandableProps>(
   }
 );
 
+Expandable.displayName = "Expandable";
+
 // Simplify animation types
 type AnimationPreset = {
-  initial: { [key: string]: any };
-  animate: { [key: string]: any };
-  exit: { [key: string]: any };
+  initial: { [key: string]: number | string };
+  animate: { [key: string]: number | string };
+  exit: { [key: string]: number | string };
 };
 
 // Update ANIMATION_PRESETS type
@@ -214,19 +216,12 @@ const ANIMATION_PRESETS: Record<string, AnimationPreset> = {
   },
 };
 
-// Update type definitions
-type AnimationConfig = {
-  initial: { [key: string]: number | string };
-  animate: { [key: string]: number | string };
-  exit: { [key: string]: number | string };
-};
-
-// Props for defining custom animations
+// Replace `any` with specific types in AnimationProps
 interface AnimationProps {
   initial?: TargetAndTransition;
   animate?: TargetAndTransition;
   exit?: TargetAndTransition;
-  transition?: any;
+  transition?: Record<string, number | string>;
 }
 
 // Inside ExpandableContent component
@@ -355,6 +350,8 @@ const ExpandableContent = React.forwardRef<
     );
   }
 );
+
+ExpandableContent.displayName = "ExpandableContent";
 
 interface ExpandableCardProps {
   children: ReactNode;

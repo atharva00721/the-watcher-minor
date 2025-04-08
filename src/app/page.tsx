@@ -92,7 +92,7 @@ export default function Home() {
                       Custom Configuration
                     </h3>
                     <p className="text-muted-foreground">
-                      We configure The Watcher's ML models to your specific
+                      We configure The Watcher&apos;s ML models to your specific
                       security needs and environment.
                     </p>
                   </div>
@@ -107,7 +107,8 @@ export default function Home() {
                     </h3>
                     <p className="text-muted-foreground">
                       Seamless installation followed by a training period where
-                      The Watcher learns your environment's normal patterns.
+                      The Watcher learns your environment&apos;s normal
+                      patterns.
                     </p>
                   </div>
                 </div>

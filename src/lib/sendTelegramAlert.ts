@@ -90,13 +90,7 @@ export async function sendTelegramAlert(
           }
 
           const blob = new Blob(byteArrays, { type: "image/jpeg" });
-          formData.append("photo", blob, `incident_${report.id}_${i}.jpg`);
-          formData.append(
-            "caption",
-            `Evidence from incident #${report.id} (${i + 1}/${
-              report.frames.length
-            })`
-          );
+          formData.append("photo", blob);
 
           // Send photo using multipart/form-data
           const photoUrl = `https://api.telegram.org/bot${token}/sendPhoto`;

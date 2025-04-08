@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -48,6 +49,7 @@
     from {
       height: 0;
     }
+
     to {
       height: var(--radix-accordion-content-height);
     }
@@ -57,6 +59,7 @@
     from {
       height: var(--radix-accordion-content-height);
     }
+
     to {
       height: 0;
     }
@@ -136,7 +139,102 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+.doto-black {
+  font-family: "Doto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+  font-variation-settings:
+    "ROND" 100;
+}
+
+.figtree-light {
+  font-family: "Figtree", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.glow-text {
+  text-shadow:
+    0 0 5px rgba(255, 255, 255, 0.3),
+    0 0 10px rgba(255, 255, 255, 0.2),
+    0 0 15px rgba(255, 255, 255, 0.1),
+    0 0 20px rgba(0, 183, 255, 0.1),
+    0 0 30px rgba(0, 183, 255, 0.1);
+  animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow:
+      0 0 5px rgba(255, 255, 255, 0.3),
+      0 0 10px rgba(255, 255, 255, 0.2),
+      0 0 15px rgba(255, 255, 255, 0.1),
+      0 0 20px rgba(0, 183, 255, 0.1),
+      0 0 30px rgba(0, 183, 255, 0.1);
+  }
+
+  to {
+    text-shadow:
+      0 0 10px rgba(255, 255, 255, 0.4),
+      0 0 20px rgba(255, 255, 255, 0.3),
+      0 0 30px rgba(255, 255, 255, 0.2),
+      0 0 40px rgba(0, 183, 255, 0.2),
+      0 0 50px rgba(0, 183, 255, 0.1);
+  }
+}
+
+/* Add enhanced responsive styles */
+@media (max-width: 640px) {
+  .glow-text {
+    text-shadow:
+      0 0 3px rgba(255, 255, 255, 0.3),
+      0 0 6px rgba(255, 255, 255, 0.2);
+    font-size: clamp(2rem, 8vw, 3.75rem);
+  }
+
+  h1 {
+    line-height: 1.1;
+  }
+
+  h2 {
+    line-height: 1.2;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .group:active .group-hover\:scale-110 {
+    transform: scale(1.05);
+  }
+
+  .group:active .group-hover\:opacity-100 {
+    opacity: 1;
+  }
+
+  .group:active .group-hover\:text-primary {
+    color: var(--primary);
+  }
+}
+
+/* Improve performance for animations */
+@media (prefers-reduced-motion: reduce) {
+
+  .transition-all,
+  .transition-colors,
+  .transition-opacity,
+  .transition-transform {
+    transition: none !important;
+  }
+
+  .animate-glow {
+    animation: none !important;
   }
 }

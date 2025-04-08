@@ -19,7 +19,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { runInference, InferenceResult } from "@/lib/inference";
 import { Progress } from "@/components/ui/progress";
-import { generateViolenceReport, ViolenceReport } from "@/lib/gemini";
+import { ViolenceReport } from "@/lib/gemini";
 import { ViolenceReportsList } from "@/components/ViolenceReportsList";
 import { AlertCircle, Clock, Loader2 } from "lucide-react";
 import { processAndAlertIfNeeded } from "@/lib/alertManager";

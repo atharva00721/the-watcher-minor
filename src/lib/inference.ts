@@ -23,24 +23,16 @@ export async function runInference(
 ): Promise<InferenceResult> {
   const startTime = performance.now();
 
-  // Get or cache model metadata
-  const sessionId = (session as any).sessionId;
-  let inputName, outputName;
-
-  if (modelMetadataCache[sessionId]) {
-    ({ inputName, outputName } = modelMetadataCache[sessionId]);
-  } else {
-    inputName = session.inputNames[0];
-    outputName = session.outputNames[0];
-    modelMetadataCache[sessionId] = { inputName, outputName };
-  }
+  // Get model metadata
+  const inputName = session.inputNames[0];
+  const outputName = session.outputNames[0];
 
   // Preprocess and prepare input tensor
   const preprocessedData = preprocessFrame(canvas);
   const inputTensor = new Tensor("float32", preprocessedData, [1, 128, 128, 3]);
 
   // Run inference
-  const feeds: Record<string,typeof Tensor> = { [inputName]: inputTensor };
+  const feeds = { [inputName]: inputTensor };
   const outputMap = await session.run(feeds);
 
   // Extract results

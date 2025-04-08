@@ -2,17 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import {
-  Eye,
-  Shield,
-  BarChart,
-  Terminal,
-  Lock,
-  AlertCircle,
-  Radar,
-  Network,
-} from "lucide-react";
-import { AISurveillanceFlow } from "./test/page";
+import { Shield, Radar, Network } from "lucide-react";
+import AISurveillanceFlow from "./test/page";
 
 const Landing = () => {
   const { scrollY } = useScroll();
@@ -195,7 +186,7 @@ const Landing = () => {
       </div>
 
       {/* Live Stats Display */}
-      <div className="border-t border-white/10 bg-gradient-to-b from-black to-blue-950/20">
+      {/* <div className="border-t border-white/10 bg-gradient-to-b from-black to-blue-950/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -221,7 +212,7 @@ const Landing = () => {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Testimonials Section */}
       <AISurveillanceFlow />

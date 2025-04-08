@@ -18,7 +18,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { AlertTriangle, XCircle } from "lucide-react";
 import Image from "next/image";
 
 interface ViolenceReportModalProps {

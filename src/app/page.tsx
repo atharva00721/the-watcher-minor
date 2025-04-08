@@ -1,228 +1,281 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  ArrowRight,
   Eye,
-  Server,
-  AlertTriangle,
+  Shield,
+  BarChart,
+  Terminal,
   Lock,
-  Fingerprint,
-  Zap,
+  AlertCircle,
+  Radar,
+  Network,
 } from "lucide-react";
+import { AISurveillanceFlow } from "./test/page";
 
 const Landing = () => {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const { scrollY } = useScroll();
+  const opacity = useTransform(scrollY, [0, 300], [1, 0]);
+  const [activeTab, setActiveTab] = useState("overview");
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-200 font-sans">
-      {/* Hero Section */}
-      <div className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-70"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(30,41,59,0.3)_0%,rgba(0,0,0,0.7)_70%)]"></div>
-
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6"
-          >
-            <h1 className="text-5xl md:text-6xl font-bold text-white tracking-tight">
-              Watcher AI Surveillance
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
-              Advanced AI-powered surveillance solutions for unparalleled
-              security and insights.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-full text-white font-medium transition-colors duration-300">
-                Explore Solutions
-                <ArrowRight className="inline-block ml-2" />
-              </button>
-              <button className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-full text-gray-300 font-medium transition-colors duration-300">
-                Request Demo
-              </button>
+    <div className="min-h-screen bg-black selection:bg-blue-500/30 selection:text-white">
+      {/* Unique Navigation with Animated Indicator */}
+      <nav className="fixed w-full z-50 border-b border-white/10 bg-black/50 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex h-16 items-center justify-between px-4">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
+              <span className="text-white font-medium tracking-wider">
+                WATCHER
+              </span>
             </div>
-          </motion.div>
+
+            <div className="hidden md:flex items-center gap-8 relative">
+              {["Overview", "Technology", "Security", "API"].map((item) => (
+                <button
+                  key={item}
+                  onClick={() => setActiveTab(item.toLowerCase())}
+                  className={`text-sm relative px-4 py-2 transition-colors ${
+                    activeTab === item.toLowerCase()
+                      ? "text-white"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  {item}
+                  {activeTab === item.toLowerCase() && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-white/5 rounded-lg"
+                      transition={{
+                        type: "spring",
+                        bounce: 0.2,
+                        duration: 0.6,
+                      }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            <button className="relative group px-4 py-2 overflow-hidden rounded-lg">
+              <div className="absolute inset-0 bg-blue-500/20 transition-transform group-hover:translate-x-full duration-300" />
+              <div className="relative text-sm text-white font-medium">
+                Get Access →
+              </div>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section with Dynamic Grid */}
+      <div className="relative min-h-screen">
+        <div className="absolute inset-0 grid grid-cols-[repeat(auto-fit,minmax(50px,1fr))] grid-rows-[repeat(auto-fit,minmax(50px,1fr))] opacity-[0.15]">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div
+              key={i}
+              className="border border-blue-500/20"
+              style={{
+                opacity: Math.random() * 0.3,
+              }}
+            />
+          ))}
+        </div>
+
+        <motion.div style={{ opacity }} className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 via-transparent to-black" />
+        </motion.div>
+
+        <div className="relative pt-32 pb-24 sm:pt-40 sm:pb-32">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center space-y-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="relative inline-block"
+              >
+                <div className="text-sm text-blue-500 border border-blue-500/30 rounded-full px-4 py-1 mb-4 backdrop-blur-sm">
+                  Version 2.0 Now Available
+                </div>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="text-5xl sm:text-7xl font-medium tracking-tight text-white"
+              >
+                The Future of
+                <span className="block mt-1">Surveillance AI</span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                className="mx-auto max-w-2xl text-lg text-gray-400"
+              >
+                Advanced machine learning algorithms process surveillance data
+                in real-time, providing unparalleled security insights with
+                quantum-grade encryption.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                className="flex items-center justify-center gap-4"
+              >
+                <button className="group relative px-6 py-3 rounded-lg overflow-hidden">
+                  <div className="absolute inset-0 bg-blue-500 transition-transform group-hover:translate-x-full duration-300" />
+                  <span className="relative text-white font-medium">
+                    Request Demo
+                  </span>
+                </button>
+
+                <button className="px-6 py-3 text-gray-400 hover:text-white transition-colors">
+                  Documentation →
+                </button>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Key Features Section */}
-      <div className="py-20">
+      {/* Features Grid with Hover Effects */}
+      <div className="relative py-24 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white mb-10 text-center">
-            Key Features
-          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                icon: <Eye className="w-6 h-6" />,
-                title: "Real-Time Monitoring",
+                icon: <Radar className="w-6 h-6" />,
+                title: "Real-time Detection",
                 description:
-                  "24/7 surveillance with instant alerts and insights.",
+                  "Process surveillance data with sub-millisecond latency using edge computing",
               },
               {
-                icon: <Server className="w-6 h-6" />,
-                title: "AI-Driven Analytics",
-                description: "Advanced threat detection and behavior analysis.",
+                icon: <Network className="w-6 h-6" />,
+                title: "Neural Analysis",
+                description:
+                  "Advanced pattern recognition across distributed sensor networks",
               },
               {
-                icon: <AlertTriangle className="w-6 h-6" />,
-                title: "Anomaly Detection",
+                icon: <Shield className="w-6 h-6" />,
+                title: "Quantum Security",
                 description:
-                  "Identify unusual activities before they escalate.",
+                  "Military-grade encryption for all data in transit and at rest",
               },
-              {
-                icon: <Lock className="w-6 h-6" />,
-                title: "Secure Data Storage",
-                description:
-                  "End-to-end encrypted data storage with access control.",
-              },
-              {
-                icon: <Fingerprint className="w-6 h-6" />,
-                title: "Biometric Recognition",
-                description:
-                  "Advanced facial and object recognition capabilities.",
-              },
-              {
-                icon: <Zap className="w-6 h-6" />,
-                title: "Rapid Response",
-                description:
-                  "Automated alerts and incident management workflows.",
-              },
+              // Add more features...
             ].map((feature, i) => (
-              <div
+              <motion.div
                 key={i}
-                className="p-6 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="group relative"
               >
-                <div className="h-12 w-12 flex items-center justify-center text-blue-500 mb-4">
-                  {feature.icon}
+                <div className="absolute -inset-px bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
+                <div className="relative h-full p-6 bg-black rounded-xl border border-white/10">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-lg font-medium text-white">
+                      {feature.title}
+                    </h3>
+                  </div>
+                  <p className="text-gray-400">{feature.description}</p>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Advanced Technology Section */}
-      <div className="bg-gray-800 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div className="md:order-2">
-            <img
-              src="https://placehold.co/600x400"
-              alt="AI Surveillance Tech"
-              className="rounded-lg shadow-xl"
-            />
-          </div>
-          <div className="space-y-4 md:order-1">
-            <h2 className="text-3xl font-bold text-white">
-              Advanced Technology
-            </h2>
-            <p className="text-gray-300">
-              Our AI surveillance system uses cutting-edge technology to provide
-              superior threat detection and response.
-            </p>
-            <ul className="list-disc pl-5 text-gray-400">
-              <li>Deep Neural Networks</li>
-              <li>Predictive Analytics</li>
-              <li>Real-Time Data Processing</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Security and Compliance Section */}
-      <div className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div>
-            <h2 className="text-3xl font-bold text-white">
-              Security and Compliance
-            </h2>
-            <p className="text-gray-300">
-              We prioritize the security and privacy of your data. Our
-              surveillance solutions comply with industry standards and
-              regulations.
-            </p>
-            <ul className="list-disc pl-5 text-gray-400">
-              <li>End-to-End Encryption</li>
-              <li>GDPR Compliance</li>
-              <li>Regular Security Audits</li>
-            </ul>
-          </div>
-          <div>
-            <img
-              src="https://placehold.co/600x400"
-              alt="Security Compliance"
-              className="rounded-lg shadow-xl"
-            />
+      {/* Live Stats Display */}
+      <div className="border-t border-white/10 bg-gradient-to-b from-black to-blue-950/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { value: "99.99%", label: "Accuracy Rate" },
+              { value: "0.1ms", label: "Response Time" },
+              { value: "24/7/365", label: "Monitoring" },
+              { value: "Quantum", label: "Encryption" },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: i * 0.2 }}
+                className="group relative text-center"
+              >
+                <div className="text-3xl font-light text-white mb-2 group-hover:text-blue-500 transition-colors">
+                  {stat.value}
+                </div>
+                <div className="text-sm text-gray-400 uppercase tracking-wider">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Testimonials Section */}
-      <div className="bg-gray-800 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white mb-10 text-center">
-            Customer Testimonials
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                quote:
-                  "Watcher AI has transformed our security operations. The AI-driven insights are invaluable.",
-                author: "John Doe, CEO",
-              },
-              {
-                quote:
-                  "The anomaly detection feature has helped us prevent numerous incidents. Highly recommended!",
-                author: "Jane Smith, Security Manager",
-              },
-            ].map((testimonial, i) => (
-              <div key={i} className="p-6 bg-gray-700 rounded-lg">
-                <p className="text-gray-300 italic mb-4">
-                  "{testimonial.quote}"
-                </p>
-                <p className="text-gray-400">- {testimonial.author}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Call to Action Section */}
-      <div className="py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white">
-            Secure Your Future with Watcher AI
-          </h2>
-          <p className="text-xl text-gray-300 mt-4">
-            Get in touch with our experts to discuss your surveillance needs.
-          </p>
-          <button className="mt-8 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-full text-white font-medium transition-colors duration-300">
-            Contact Us
-            <ArrowRight className="inline-block ml-2" />
-          </button>
+      <AISurveillanceFlow />
+      {/* CTA Section */}
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <h2 className="text-3xl font-medium text-white">
+              Ready to transform your surveillance capabilities?
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Join leading organizations using Watcher AI to secure their
+              infrastructure and gain real-time insights.
+            </p>
+            <div className="flex justify-center gap-4">
+              <button className="px-8 py-4 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-medium transition-colors">
+                Get Started Now →
+              </button>
+              <a
+                href="/demo"
+                className="px-8 py-4 border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg font-medium transition-colors"
+              >
+                Demo Page →
+              </a>
+            </div>
+          </motion.div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900 py-8 text-center text-gray-500 border-t border-gray-700">
-        <p>
-          &copy; {new Date().getFullYear()} Watcher AI Surveillance. All rights
-          reserved.
-        </p>
+      <footer className="bg-black border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col md:flex-row justify-between items-center">
+          <div className="text-gray-400">
+            &copy; {new Date().getFullYear()} WATCHER. All rights reserved.
+          </div>
+          <div className="flex space-x-4 mt-4 md:mt-0">
+            <a
+              href="/privacy"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="/terms"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              Terms of Use
+            </a>
+          </div>
+        </div>
       </footer>
     </div>
   );

@@ -1,17 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+
 import {
   Eye,
-  Shield,
   Cpu,
   Brain,
   BarChart3,
@@ -19,17 +11,11 @@ import {
   ArrowRight,
   Github,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
 import { WatcherModelCardList } from "@/components/landing/demo-section";
 import Sidebar from "@/components/landing/sidebar";
 import FeatureCard from "@/components/landing/feature-card";
 import TechStack from "@/components/landing/tech-stack";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { VideoPreprocessingFlow } from "@/components/landing/flow";
 import Hero from "@/components/landing/hero";
 
@@ -45,7 +31,9 @@ export default function Home() {
           <VideoPreprocessingFlow />
 
           <div className="mb-16">
-            <h2 className="text-2xl font-semibold mb-6 doto-black">Core Features</h2>
+            <h2 className="text-2xl font-semibold mb-6 doto-black">
+              Core Features
+            </h2>
             <div className="grid grid-cols-2 gap-6">
               <FeatureCard
                 icon={<Eye className="w-6 h-6" />}

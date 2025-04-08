@@ -9,10 +9,10 @@ export interface InferenceResult {
 }
 
 // Cache for input and output names
-const modelMetadataCache: Record<
-  string,
-  { inputName: string; outputName: string }
-> = {};
+// const modelMetadataCache: Record<
+//   string,
+//   { inputName: string; outputName: string }
+// > = {};
 
 /**
  * Run inference on a single frame

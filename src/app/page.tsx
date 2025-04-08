@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Shield, Radar, Network } from "lucide-react";
-import AISurveillanceFlow from "./test/page";
+// import AISurveillanceFlow from "./test/page";
 
 const Landing = () => {
   const { scrollY } = useScroll();
@@ -215,7 +215,7 @@ const Landing = () => {
       </div> */}
 
       {/* Testimonials Section */}
-      <AISurveillanceFlow />
+      {/* <AISurveillanceFlow /> */}
       {/* CTA Section */}
       <div className="relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">

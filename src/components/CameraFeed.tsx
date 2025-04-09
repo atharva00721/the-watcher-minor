@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { loadModel, clearModelCache } from "@/lib/model";
 import { InferenceSession } from "onnxruntime-web";
-import { FramesDisplay } from "@/components/FramesDisplay";
 import { captureVideoFrame } from "@/lib/frameCapture";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -351,6 +350,13 @@ export default function CameraFeed() {
       });
   }, [modelUrl]);
 
+  // Camera information
+  const cameraInfo = {
+    name: "Virtual Camera",
+    resolution: "1280x720",
+    fps: 30,
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-full px-6 lg:px-12 mx-auto">
       {/* Left Column: Camera Feed */}
@@ -395,12 +401,12 @@ export default function CameraFeed() {
                     </span>
                   </div>
                   <div className="space-y-1.5">
-                    <div className="flex justify-between text-xs">
+                    {/* <div className="flex justify-between text-xs">
                       <span>Confidence:</span>
                       <span className="font-medium">
                         {Math.round(inferenceResult.confidence * 100)}%
                       </span>
-                    </div>
+                    </div> */}
                     <Progress
                       value={inferenceResult.confidence * 100}
                       className={`h-1.5 ${
@@ -512,117 +518,27 @@ export default function CameraFeed() {
           modelUrl={modelUrl}
           setModelUrl={setModelUrl}
           session={!!session}
+          originalFrames={recentFrames}
+          processedFrames={processedFrames}
+          isCapturing={isCapturing}
+          showReports={showReports}
+          setShowReports={setShowReports}
+          violenceReports={violenceReports}
+          actualViolence={actualViolence}
+          falsePositives={falsePositives}
+          reportCooldown={reportCooldown}
+          cooldownTimeLeft={cooldownTimeLeft}
+          formatCooldownTime={formatCooldownTime}
+          setViolenceReports={setViolenceReports}
+          inferenceResult={inferenceResult}
+          cameraInfo={cameraInfo} // Pass cameraInfo here
         />
-        {/* Model Selector and Control Buttons */}
-        <div className="flex flex-col gap-4"></div>
 
-        {/* Report Controls and Stats */}
-        <div className="flex flex-wrap gap-4 w-full justify-between items-center border rounded-lg p-6 bg-background/50">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="show-reports"
-              checked={showReports}
-              onCheckedChange={setShowReports}
-            />
-            <Label htmlFor="show-reports" className="font-medium">
-              Show Reports
-            </Label>
-          </div>
+        {/* Remove duplicate Report Controls and Stats section */}
 
-          <div className="flex items-center gap-2">
-            {violenceReports.length > 0 && (
-              <Badge variant="outline">
-                {violenceReports.length} Report
-                {violenceReports.length !== 1 ? "s" : ""}
-              </Badge>
-            )}
+        {/* Remove duplicate Reports List section */}
 
-            <div className="flex items-center  gap-2 ml-4">
-              <Badge
-                variant="outline"
-                className="text-green-500 dark:text-green-400"
-              >
-                Verified: {actualViolence}
-              </Badge>
-              <Badge
-                variant="outline"
-                className="text-amber-500 dark:text-amber-400"
-              >
-                False Alerts: {falsePositives}
-              </Badge>
-
-              {reportCooldown && (
-                <Badge
-                  variant="outline"
-                  className="text-blue-500 dark:text-blue-400"
-                >
-                  Cooldown: {formatCooldownTime(cooldownTimeLeft)}
-                </Badge>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Reports List */}
-        {showReports && (
-          <div className="w-full">
-            <h3 className="text-lg font-semibold mb-2">Violence Reports</h3>
-            <ViolenceReportsList
-              reports={violenceReports.filter(
-                (report): report is ViolenceReport => report !== null
-              )}
-              onDeleteReport={(id) =>
-                setViolenceReports((prev) => prev.filter((r) => r?.id !== id))
-              }
-            />
-          </div>
-        )}
-
-        {/* Frames Controls */}
-        {isCapturing && recentFrames.length > 0 && (
-          <div className="flex flex-wrap justify-between items-center w-full border rounded-lg p-4 bg-background/50">
-            <div className="flex items-center gap-4">
-              <Badge variant="outline" className="ml-2">
-                {recentFrames.length} frames captured
-              </Badge>
-
-              {inferenceResult && (
-                <Badge
-                  variant={
-                    inferenceResult.prediction === "Safe"
-                      ? "default"
-                      : "destructive"
-                  }
-                >
-                  {inferenceResult.prediction === "Safe"
-                    ? "✅ Safe"
-                    : "⚠️ Violence"}{" "}
-                  ({Math.round(inferenceResult.confidence * 100)}%)
-                </Badge>
-              )}
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="show-frames"
-                checked={showFrames}
-                onCheckedChange={setShowFrames}
-              />
-              <Label htmlFor="show-frames" className="text-sm">
-                Show Frames
-              </Label>
-            </div>
-          </div>
-        )}
-
-        {/* Frames Display */}
-        {showFrames && (
-          <FramesDisplay
-            originalFrames={recentFrames}
-            processedFrames={processedFrames}
-            isCapturing={isCapturing}
-          />
-        )}
+        {/* Remove duplicate Frames Controls section */}
       </div>
     </div>
   );

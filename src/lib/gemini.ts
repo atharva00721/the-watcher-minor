@@ -22,17 +22,25 @@ export interface ViolenceReport {
 function selectRepresentativeFrames(
   frames: string[],
   confidenceScores: number[],
-  maxFrames: number
+  maxFrames: number,
+  threshold: number = 0.5
 ): string[] {
-  if (frames.length <= maxFrames) return frames;
-
-  // Sort by confidence score (highest first)
   const framesWithScores = frames
     .map((frame, index) => ({ frame, score: confidenceScores[index] || 0 }))
-    .sort((a, b) => b.score - a.score);
-
-  // Return top N frames
-  return framesWithScores.slice(0, maxFrames).map((item) => item.frame);
+    .filter((item) => item.score >= threshold);
+  if (framesWithScores.length === 0) {
+    // Fallback: use highest scoring frames if none pass the threshold.
+    const fallback = frames
+      .map((frame, index) => ({ frame, score: confidenceScores[index] || 0 }))
+      .sort((a, b) => b.score - a.score);
+    return fallback.slice(0, maxFrames).map((item) => item.frame);
+  }
+  if (framesWithScores.length <= maxFrames)
+    return framesWithScores.map((item) => item.frame);
+  return framesWithScores
+    .sort((a, b) => b.score - a.score)
+    .slice(0, maxFrames)
+    .map((item) => item.frame);
 }
 
 /**
@@ -54,30 +62,27 @@ export async function generateViolenceReport(
       throw new Error("Gemini API key missing");
     }
 
-    // Select a subset of representative frames (max 4)
+    // Use updated frame selection with threshold.
     const frameSubset = selectRepresentativeFrames(frames, confidenceScores, 4);
 
-    // Convert to Gemini-compatible format
-    const imageParts = await Promise.all(
-      frameSubset.map((frame) => ({
-        inlineData: {
-          data: frame.replace(/^data:image\/(png|jpeg|jpg);base64,/, ""),
-          mimeType: "image/jpeg",
-        },
-      }))
-    );
+    // Directly map frames to Gemini-compatible format.
+    const imageParts = frameSubset.map((frame) => ({
+      inlineData: {
+        data: frame.replace(/^data:image\/(png|jpeg|jpg);base64,/, ""),
+        mimeType: "image/jpeg",
+      },
+    }));
 
-    // Get model and create prompt
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    // Updated prompt with stricter instructions to minimize false positives.
     const prompt = `
-    You are a security analysis expert. I'm showing you frames from a surveillance system that detected potential violence.
+    You are a security analysis expert. I'm showing you frames from a surveillance system.
     
-    Analyze these frames and provide:
-    1. Brief summary (2-3 sentences)
-    2. Detailed description of concerning behavior
-    3. Severity assessment (low, medium, or high)
-    4. Recommendations for response
-    5. MOST IMPORTANTLY: Determine if this contains real physical violence requiring intervention
+    Analyze the frames and provide:
+    1. A brief summary (2-3 sentences).
+    2. A detailed description of any concerning behavior.
+    3. A severity assessment: low, medium, or high.
+    4. Clear recommendations for response.
+    5. MOST IMPORTANTLY: Only mark as violent if there is clear, unmistakable physical violence (e.g. assault or weapons). Do not flag ambiguous or low-evidence scenes.
     
     Format as JSON:
     {
@@ -88,12 +93,10 @@ export async function generateViolenceReport(
       "isActualViolence": true|false
     }
     
-    For "isActualViolence", only TRUE for clear physical violence/assault/weapons.
-    FALSE for non-violent scenes, playful behavior, media, sports.
-    
     RESPOND WITH JSON ONLY.`;
 
     // Generate content with Gemini
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
     const result = await model.generateContent([prompt, ...imageParts]);
     const text = result.response.text();
 

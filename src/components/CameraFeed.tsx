@@ -6,13 +6,6 @@ import { loadModel, clearModelCache } from "@/lib/model";
 import { InferenceSession } from "onnxruntime-web";
 import { FramesDisplay } from "@/components/FramesDisplay";
 import { captureVideoFrame } from "@/lib/frameCapture";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -522,9 +515,7 @@ export default function CameraFeed() {
           session={!!session}
         />
         {/* Model Selector and Control Buttons */}
-        <div className="flex flex-col gap-4">
-          
-        </div>
+        <div className="flex flex-col gap-4"></div>
 
         {/* Report Controls and Stats */}
         <div className="flex flex-wrap gap-4 w-full justify-between items-center border rounded-lg p-6 bg-background/50">

@@ -15,6 +15,7 @@ export interface AnimatedBeamProps {
   pathColor?: string;
   pathWidth?: number;
   pathOpacity?: number;
+  pathType?: "curve" | "straight" | "step";
   gradientStartColor?: string;
   gradientStopColor?: string;
   delay?: number;
@@ -37,6 +38,7 @@ export const AnimatedBeam: React.FC<AnimatedBeamProps> = ({
   pathColor = "gray",
   pathWidth = 2,
   pathOpacity = 0.2,
+  pathType = "curve",
   gradientStartColor = "#ffaa40",
   gradientStopColor = "#9c40ff",
   startXOffset = 0,
@@ -83,10 +85,21 @@ export const AnimatedBeam: React.FC<AnimatedBeamProps> = ({
         const endY =
           rectB.top - containerRect.top + rectB.height / 2 + endYOffset;
 
-        const controlY = startY - curvature;
-        const d = `M ${startX},${startY} Q ${
-          (startX + endX) / 2
-        },${controlY} ${endX},${endY}`;
+        let d = "";
+
+        if (pathType === "straight") {
+          d = `M ${startX},${startY} L ${endX},${endY}`;
+        } else if (pathType === "step") {
+          const midX = startX + (endX - startX) / 2;
+          d = `M ${startX},${startY} L ${midX},${startY} L ${midX},${endY} L ${endX},${endY}`;
+        } else {
+          // Default to curved path (quadratic Bézier)
+          const controlY = startY - curvature;
+          d = `M ${startX},${startY} Q ${
+            (startX + endX) / 2
+          },${controlY} ${endX},${endY}`;
+        }
+
         setPathD(d);
       }
     };
@@ -117,6 +130,7 @@ export const AnimatedBeam: React.FC<AnimatedBeamProps> = ({
     startYOffset,
     endXOffset,
     endYOffset,
+    pathType, // Include pathType in the dependency array
   ]);
 
   return (

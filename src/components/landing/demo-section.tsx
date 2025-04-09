@@ -11,65 +11,10 @@ import {
 } from "./expandable";
 import { Radar, Clock, Gauge } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import Model350Icon from "@/Icon/model350Icon";
-import Model500Icon from "@/Icon/model500Icon";
-import modelBiLSTMIcon from "@/Icon/modelBiLSTMIcon";
+import { modelData } from "@/constants/models";
 
 // import Arvie500SVG from "@/assets/arvie500.svg";
 // import ArvieLSTM from "@/assets/arviebilstm.svg";
-
-const modelData = [
-  {
-    name: "Arvie 350",
-    title: "Violence Detection",
-    description: "ONNX-based Violence Detection trained on 700 videos",
-    status: "MobileNetV2",
-    zones: 6,
-    latency: "40ms",
-    accuracy: "92%",
-    evaluation: {
-      precision: "91%",
-      recall: "89%",
-      f1Score: "90%",
-    },
-    lastUpdated: "6 Weeks Ago",
-    logo: Model350Icon,
-  },
-  {
-    name: "Arvie 500",
-    title: "Violence Detection",
-    description:
-      "ONNX-based model trained on 1000 curated violent/non-violent clips",
-    status: "YOLOv8 + MobileNetV2",
-    zones: 8,
-    latency: "35ms",
-    accuracy: "94%",
-    evaluation: {
-      precision: "95%",
-      recall: "93%",
-      f1Score: "94%",
-    },
-    lastUpdated: "2 Weeks Ago",
-    logo: Model500Icon,
-  },
-  {
-    name: "Arvie BiLSTM (Beta)",
-    title: "Violence Detection",
-    description:
-      "Experimental BiLSTM-based sequence model for aggression patterns",
-    status: "MobileNetV2 + BiLSTM (Beta)",
-    zones: 4,
-    latency: "60ms",
-    accuracy: "87%",
-    evaluation: {
-      precision: "85%",
-      recall: "82%",
-      f1Score: "83%",
-    },
-    lastUpdated: "1 Week Ago",
-    logo: modelBiLSTMIcon,
-  },
-];
 
 export function WatcherModelCardList() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);

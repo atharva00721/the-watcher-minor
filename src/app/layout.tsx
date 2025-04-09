@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { JetBrains_Mono } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "The Watcher | Real-time Monitoring Platform",
@@ -50,13 +51,22 @@ export const metadata: Metadata = {
   },
 };
 
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${jetBrainsMono.variable}`}
+    >
       <body className="figtree-light antialiased">
         <ThemeProvider
           attribute="class"

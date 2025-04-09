@@ -13,7 +13,7 @@ import {
 const Hero = () => {
   return (
     <div>
-      <h1 className="doto-black text-6xl font-light tracking-widest mb-6 text-primary glow-text">
+      <h1 className="doto-black text-6xl tracking-widest mb-6 text-primary glow-text">
         THE WATCHER
       </h1>
 
@@ -60,7 +60,7 @@ const Hero = () => {
               })
             }
           >
-            <Shield className="w-4 h-4 mr-2" />
+            <Shield className="w-4 h-4 mr-2 hidden md:flex" />
             Learn More
           </Button>
         </div>

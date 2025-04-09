@@ -23,13 +23,17 @@ import { ViolenceReport } from "@/lib/gemini";
 import { ViolenceReportsList } from "@/components/ViolenceReportsList";
 import { AlertCircle, Clock, Loader2 } from "lucide-react";
 import { processAndAlertIfNeeded } from "@/lib/alertManager";
-
-// Constants
-const MAX_FRAMES = 16;
-const MAX_VIOLENCE_FRAMES = 10;
-const VIOLENCE_THRESHOLD = 0.7;
-const COOLDOWN_PERIOD = 5 * 60; // 5 minutes in seconds
-const CAPTURE_INTERVAL = 500; // ms
+import {
+  MAX_FRAMES,
+  MAX_VIOLENCE_FRAMES,
+  VIOLENCE_THRESHOLD,
+  COOLDOWN_PERIOD,
+  CAPTURE_INTERVAL,
+} from "@/app/demo/_constants/constants";
+import Model500Icon from "@/Icon/model500Icon";
+import { Notification } from "@/components/ui/Notification";
+import { ModelSelector } from "@/components/ModelSelector";
+import { TabsComponent } from "@/app/demo/_component/TabsComponent";
 
 export default function CameraFeed() {
   // DOM References
@@ -57,8 +61,6 @@ export default function CameraFeed() {
     useState<InferenceResult | null>(null);
 
   // Performance metrics
-  const [fps, setFps] = useState<number>(0);
-  const frameTimestamps = useRef<number[]>([]);
   const lastCapture = useRef<number>(0);
 
   // Violence detection
@@ -68,7 +70,6 @@ export default function CameraFeed() {
   const [violenceReports, setViolenceReports] = useState<
     (ViolenceReport | null)[]
   >([]);
-
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   const violenceDetectionTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -78,6 +79,9 @@ export default function CameraFeed() {
   const [reportCooldown, setReportCooldown] = useState(false);
   const [cooldownTimeLeft, setCooldownTimeLeft] = useState(0);
   const cooldownInterval = useRef<NodeJS.Timeout | null>(null);
+
+  const [showGeneratingReport, setShowGeneratingReport] = useState(true);
+  const [showReportCooldown, setShowReportCooldown] = useState(true);
 
   // Camera control functions
   const startCamera = useCallback(async () => {
@@ -187,18 +191,6 @@ export default function CameraFeed() {
     lastCapture.current = now;
     try {
       setIsProcessing(true);
-
-      // Calculate FPS
-      frameTimestamps.current.push(now);
-      if (frameTimestamps.current.length > 10) {
-        frameTimestamps.current.shift();
-      }
-
-      if (frameTimestamps.current.length > 1) {
-        const timeElapsed = now - frameTimestamps.current[0];
-        const framesElapsed = frameTimestamps.current.length - 1;
-        setFps(Math.round((framesElapsed / timeElapsed) * 10000) / 10);
-      }
 
       // Capture and process frame
       const { originalFrame, processedFrame } = captureVideoFrame(
@@ -368,276 +360,280 @@ export default function CameraFeed() {
   }, [modelUrl]);
 
   return (
-    <div className="flex flex-col gap-6 items-center w-full max-w-5xl mx-auto">
-      {/* Video display */}
-      <Card className="w-full bg-transparent h-fit border-none">
-        <CardContent className="p-0">
-          <div className="relative w-full">
-            {/* Inactive camera overlay */}
-            {!isCameraActive && (
-              <div className="absolute inset-0 bg-muted/50 flex items-center justify-center rounded-lg z-10">
-                <div className="bg-background/80 px-4 py-2 rounded-md backdrop-blur-sm">
-                  <p className="text-muted-foreground font-medium">
-                    Camera inactive
-                  </p>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-full px-6 lg:px-12 mx-auto">
+      {/* Left Column: Camera Feed */}
+      <div className="flex flex-col gap-6">
+        <Card className="w-full bg-transparent h-fit border-none">
+          <CardContent className="p-0">
+            <div className="relative w-full">
+              {/* Inactive camera overlay */}
+              {!isCameraActive && (
+                <div className="absolute inset-0 bg-muted/50 flex flex-col items-center justify-center rounded-lg z-10">
+                  <Model500Icon />
+                  <div className="bg-background/80 px-4 py-2 rounded-md backdrop-blur-sm">
+                    <p className="text-muted-foreground font-medium">
+                      Camera inactive
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Video element */}
-            <video
-              ref={videoRef}
-              autoPlay
-              muted
-              className="rounded-lg border border-border w-full h-auto aspect-video bg-muted/20"
-            />
+              {/* Video element */}
+              <video
+                ref={videoRef}
+                autoPlay
+                muted
+                className="rounded-lg border border-border w-full h-auto aspect-video bg-muted/20"
+              />
 
-            {/* Inference results overlay */}
-            {inferenceResult && (
-              <div className="absolute bottom-4 right-4 bg-background/80 p-3 rounded-lg backdrop-blur-sm border shadow-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className={`text-lg font-bold ${
-                      inferenceResult.prediction === "Safe"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }`}
-                  >
-                    {inferenceResult.prediction === "Safe"
-                      ? "✅ Safe"
-                      : "⚠️ Violence"}
-                  </span>
-                </div>
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-xs">
-                    <span>Confidence:</span>
-                    <span className="font-medium">
-                      {Math.round(inferenceResult.confidence * 100)}%
+              {/* Inference results overlay */}
+              {inferenceResult && (
+                <div className="absolute bottom-4 right-4 bg-background/80 p-3 rounded-lg backdrop-blur-sm border shadow-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span
+                      className={`text-lg font-bold ${
+                        inferenceResult.prediction === "Safe"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {inferenceResult.prediction === "Safe"
+                        ? "✅ Safe"
+                        : "⚠️ Violence"}
                     </span>
                   </div>
-                  <Progress
-                    value={inferenceResult.confidence * 100}
-                    className={`h-1.5 ${
-                      inferenceResult.prediction === "Safe"
-                        ? "bg-green-100"
-                        : "bg-red-100"
-                    }`}
-                  />
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {inferenceResult.inferenceTime.toFixed(2)}ms
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs">
+                      <span>Confidence:</span>
+                      <span className="font-medium">
+                        {Math.round(inferenceResult.confidence * 100)}%
+                      </span>
+                    </div>
+                    <Progress
+                      value={inferenceResult.confidence * 100}
+                      className={`h-1.5 ${
+                        inferenceResult.prediction === "Safe"
+                          ? "bg-green-100"
+                          : "bg-red-100"
+                      }`}
+                    />
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {inferenceResult.inferenceTime.toFixed(2)}ms
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Status indicators */}
-            {isProcessing && (
-              <div className="absolute top-2 left-2">
-                <Badge
-                  variant="outline"
-                  className="bg-background/50 animate-pulse"
-                >
-                  Processing...
-                </Badge>
-              </div>
-            )}
+              {/* Status indicators */}
+              {isProcessing && (
+                <div className="absolute top-2 left-2">
+                  <Badge
+                    variant="outline"
+                    className="bg-background/50 animate-pulse"
+                  >
+                    Processing...
+                  </Badge>
+                </div>
+              )}
 
-            {isCapturing && (
-              <div className="absolute top-2 right-2 bg-background/70 px-2 py-1 rounded text-xs">
-                {fps.toFixed(1)} FPS
-              </div>
-            )}
+              {errorMessage && (
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 bg-red-500/80 text-white px-4 py-2 rounded-md backdrop-blur-sm">
+                  {errorMessage}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-            {errorMessage && (
-              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 bg-red-500/80 text-white px-4 py-2 rounded-md backdrop-blur-sm">
-                {errorMessage}
-              </div>
+        {/* Camera Controls */}
+        <div className="flex gap-4 w-full justify-center items-center">
+          <Button
+            onClick={isCameraActive ? stopCamera : startCamera}
+            variant={isCameraActive ? "destructive" : "accent"}
+            size="lg"
+          >
+            {isCameraActive ? "Stop Camera" : "Start Camera"}
+          </Button>
+          <Button
+            onClick={() => setIsCapturing((prev) => !prev)}
+            disabled={!isCameraActive}
+            variant={isCapturing ? "secondary" : "minimal"}
+            size="lg"
+          >
+            {isCapturing ? (
+              <>
+                <span className="mr-2">●</span> Stop Capturing
+              </>
+            ) : (
+              "Start Capturing"
             )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Alert notifications */}
-      {violenceDetected && (
-        <div className="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg animate-pulse flex items-center gap-2 z-50">
-          <AlertCircle className="h-5 w-5" />
-          <span className="font-bold">Potential Violence Detected</span>
-          <span className="text-xs bg-red-700 px-2 py-0.5 rounded-full">
-            {violenceFrames.length}/{MAX_VIOLENCE_FRAMES} frames
-          </span>
+          </Button>
         </div>
-      )}
 
-      {isGeneratingReport && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-amber-500 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-2 z-50">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          <span>Generating report...</span>
-        </div>
-      )}
+        {/* Alert notifications */}
+        {violenceDetected && (
+          <Notification
+            position="bottom-right"
+            color="red"
+            icon={<AlertCircle className="h-5 w-5" />}
+            title="Potential Violence Detected"
+            progress={{
+              value: (violenceFrames.length / MAX_VIOLENCE_FRAMES) * 100,
+              label: `${violenceFrames.length}/${MAX_VIOLENCE_FRAMES}`,
+            }}
+          />
+        )}
 
-      {reportCooldown && (
-        <div className="fixed top-4 left-4 bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-2 z-50">
-          <Clock className="h-5 w-5" />
-          <span>Cooldown: {formatCooldownTime(cooldownTimeLeft)}</span>
-        </div>
-      )}
+        {isGeneratingReport && showGeneratingReport && (
+          <Notification
+            position="bottom-center"
+            color="amber"
+            icon={<Loader2 className="h-5 w-5 animate-spin" />}
+            title="Generating report..."
+            onClose={() => setShowGeneratingReport(false)}
+          />
+        )}
 
-      {/* Hidden canvases */}
-      <canvas ref={canvasRef} width={640} height={480} className="hidden" />
-      <canvas
-        ref={processCanvasRef}
-        width={128}
-        height={128}
-        className="hidden"
-      />
+        {reportCooldown && showReportCooldown && (
+          <Notification
+            position="top-left"
+            color="blue"
+            icon={<Clock className="h-5 w-5" />}
+            title={`Cooldown: ${formatCooldownTime(cooldownTimeLeft)}`}
+            onClose={() => setShowReportCooldown(false)}
+          />
+        )}
 
-      {/* Control buttons */}
-      <div className="flex gap-3 w-full justify-center items-center">
-        <Button
-          onClick={isCameraActive ? stopCamera : startCamera}
-          variant={isCameraActive ? "destructive" : "accent"}
-          size="lg"
-        >
-          {isCameraActive ? "Stop Camera" : "Start Camera"}
-        </Button>
-        <Button
-          onClick={() => setIsCapturing((prev) => !prev)}
-          disabled={!isCameraActive}
-          variant={isCapturing ? "secondary" : "minimal"}
-          size="lg"
-        >
-          {isCapturing ? (
-            <>
-              <span className="mr-2">●</span> Stop Capturing
-            </>
-          ) : (
-            "Start Capturing"
-          )}
-        </Button>
-        <Select value={modelUrl} onValueChange={setModelUrl}>
-          <SelectTrigger id="model-select" className="w-full">
-            <SelectValue placeholder="Select model" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="/models/500model.onnx">500model.onnx</SelectItem>
-            <SelectItem value="/models/violence-light.onnx">
-              violence-light.onnx
-            </SelectItem>
-            <SelectItem value="/models/custom.onnx">custom.onnx</SelectItem>
-          </SelectContent>
-        </Select>
-        <Badge variant="outline" className={session ? "" : "bg-yellow-500/20"}>
-          {session ? "Model loaded" : "Loading model..."}
-        </Badge>
+        {/* Hidden canvases */}
+        <canvas ref={canvasRef} width={640} height={480} className="hidden" />
+        <canvas
+          ref={processCanvasRef}
+          width={128}
+          height={128}
+          className="hidden"
+        />
       </div>
 
-      {/* Report controls and stats */}
-      <div className="flex flex-wrap gap-4 w-full justify-between items-center border rounded-lg p-4 bg-background/50">
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="show-reports"
-            checked={showReports}
-            onCheckedChange={setShowReports}
-          />
-          <Label htmlFor="show-reports" className="font-medium">
-            Show Reports
-          </Label>
+      {/* Right Column: Analytics and Controls */}
+      <div className="flex flex-col gap-6 mt-6">
+        <TabsComponent
+          modelUrl={modelUrl}
+          setModelUrl={setModelUrl}
+          session={!!session}
+        />
+        {/* Model Selector and Control Buttons */}
+        <div className="flex flex-col gap-4">
+          
         </div>
 
-        <div className="flex items-center gap-2">
-          {violenceReports.length > 0 && (
-            <Badge variant="outline">
-              {violenceReports.length} Report
-              {violenceReports.length !== 1 ? "s" : ""}
-            </Badge>
-          )}
-
-          <div className="flex items-center  gap-2 ml-4">
-            <Badge
-              variant="outline"
-              className="text-green-500 dark:text-green-400"
-            >
-              Verified: {actualViolence}
-            </Badge>
-            <Badge
-              variant="outline"
-              className="text-amber-500 dark:text-amber-400"
-            >
-              False Alerts: {falsePositives}
-            </Badge>
-
-            {reportCooldown && (
-              <Badge
-                variant="outline"
-                className="text-blue-500 dark:text-blue-400"
-              >
-                Cooldown: {formatCooldownTime(cooldownTimeLeft)}
-              </Badge>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Reports list */}
-      {showReports && (
-        <div className="w-full">
-          <h3 className="text-lg font-semibold mb-2">Violence Reports</h3>
-          <ViolenceReportsList
-            reports={violenceReports.filter(
-              (report): report is ViolenceReport => report !== null
-            )}
-            onDeleteReport={(id) =>
-              setViolenceReports((prev) => prev.filter((r) => r?.id !== id))
-            }
-          />
-        </div>
-      )}
-
-      {/* Frames controls */}
-      {isCapturing && recentFrames.length > 0 && (
-        <div className="flex flex-wrap justify-between items-center w-full border rounded-lg p-3 bg-background/50">
-          <div className="flex items-center gap-4">
-            <Badge variant="outline" className="ml-2">
-              {recentFrames.length} frames captured
-            </Badge>
-
-            {inferenceResult && (
-              <Badge
-                variant={
-                  inferenceResult.prediction === "Safe"
-                    ? "default"
-                    : "destructive"
-                }
-              >
-                {inferenceResult.prediction === "Safe"
-                  ? "✅ Safe"
-                  : "⚠️ Violence"}{" "}
-                ({Math.round(inferenceResult.confidence * 100)}%)
-              </Badge>
-            )}
-          </div>
-
+        {/* Report Controls and Stats */}
+        <div className="flex flex-wrap gap-4 w-full justify-between items-center border rounded-lg p-6 bg-background/50">
           <div className="flex items-center space-x-2">
             <Switch
-              id="show-frames"
-              checked={showFrames}
-              onCheckedChange={setShowFrames}
+              id="show-reports"
+              checked={showReports}
+              onCheckedChange={setShowReports}
             />
-            <Label htmlFor="show-frames" className="text-sm">
-              Show Frames
+            <Label htmlFor="show-reports" className="font-medium">
+              Show Reports
             </Label>
           </div>
-        </div>
-      )}
 
-      {/* Frames display */}
-      {showFrames && (
-        <FramesDisplay
-          originalFrames={recentFrames}
-          processedFrames={processedFrames}
-          isCapturing={isCapturing}
-        />
-      )}
+          <div className="flex items-center gap-2">
+            {violenceReports.length > 0 && (
+              <Badge variant="outline">
+                {violenceReports.length} Report
+                {violenceReports.length !== 1 ? "s" : ""}
+              </Badge>
+            )}
+
+            <div className="flex items-center  gap-2 ml-4">
+              <Badge
+                variant="outline"
+                className="text-green-500 dark:text-green-400"
+              >
+                Verified: {actualViolence}
+              </Badge>
+              <Badge
+                variant="outline"
+                className="text-amber-500 dark:text-amber-400"
+              >
+                False Alerts: {falsePositives}
+              </Badge>
+
+              {reportCooldown && (
+                <Badge
+                  variant="outline"
+                  className="text-blue-500 dark:text-blue-400"
+                >
+                  Cooldown: {formatCooldownTime(cooldownTimeLeft)}
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Reports List */}
+        {showReports && (
+          <div className="w-full">
+            <h3 className="text-lg font-semibold mb-2">Violence Reports</h3>
+            <ViolenceReportsList
+              reports={violenceReports.filter(
+                (report): report is ViolenceReport => report !== null
+              )}
+              onDeleteReport={(id) =>
+                setViolenceReports((prev) => prev.filter((r) => r?.id !== id))
+              }
+            />
+          </div>
+        )}
+
+        {/* Frames Controls */}
+        {isCapturing && recentFrames.length > 0 && (
+          <div className="flex flex-wrap justify-between items-center w-full border rounded-lg p-4 bg-background/50">
+            <div className="flex items-center gap-4">
+              <Badge variant="outline" className="ml-2">
+                {recentFrames.length} frames captured
+              </Badge>
+
+              {inferenceResult && (
+                <Badge
+                  variant={
+                    inferenceResult.prediction === "Safe"
+                      ? "default"
+                      : "destructive"
+                  }
+                >
+                  {inferenceResult.prediction === "Safe"
+                    ? "✅ Safe"
+                    : "⚠️ Violence"}{" "}
+                  ({Math.round(inferenceResult.confidence * 100)}%)
+                </Badge>
+              )}
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="show-frames"
+                checked={showFrames}
+                onCheckedChange={setShowFrames}
+              />
+              <Label htmlFor="show-frames" className="text-sm">
+                Show Frames
+              </Label>
+            </div>
+          </div>
+        )}
+
+        {/* Frames Display */}
+        {showFrames && (
+          <FramesDisplay
+            originalFrames={recentFrames}
+            processedFrames={processedFrames}
+            isCapturing={isCapturing}
+          />
+        )}
+      </div>
     </div>
   );
 }

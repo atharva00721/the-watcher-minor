@@ -56,7 +56,7 @@ export function ModelSelector({
             <SelectContent className="rounded-md border bg-popover text-popover-foreground shadow-lg">
               {modelData.map((model) => (
                 <SelectItem
-                  key={model.modelPath}
+                  key={model.id} // Use the unique ID as the key
                   value={model.modelPath}
                   className="px-4 py-2 hover:bg-muted cursor-pointer"
                 >

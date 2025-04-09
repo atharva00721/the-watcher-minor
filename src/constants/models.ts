@@ -4,6 +4,7 @@ import modelBiLSTMIcon from "@/Icon/modelBiLSTMIcon";
 
 export const modelData = [
   {
+    id: "arvie-350", // Ensure unique ID
     name: "Arvie 350",
     title: "Violence Detection",
     description: "ONNX-based Violence Detection trained on 700 videos",
@@ -21,6 +22,7 @@ export const modelData = [
     modelPath: "/models/model350.onnx",
   },
   {
+    id: "arvie-500", // Ensure unique ID
     name: "Arvie 500",
     title: "Violence Detection",
     description:
@@ -39,6 +41,7 @@ export const modelData = [
     modelPath: "/models/500model.onnx",
   },
   {
+    id: "arvie-bilstm", // Ensure unique ID
     name: "Arvie BiLSTM (Beta)",
     title: "Violence Detection",
     description:

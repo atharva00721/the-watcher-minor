@@ -13,9 +13,6 @@ import { Radar, Clock, Gauge } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { modelData } from "@/constants/models";
 
-// import Arvie500SVG from "@/assets/arvie500.svg";
-// import ArvieLSTM from "@/assets/arviebilstm.svg";
-
 export function WatcherModelCardList() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 

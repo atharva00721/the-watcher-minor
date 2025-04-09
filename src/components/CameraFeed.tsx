@@ -25,7 +25,6 @@ import {
 } from "@/app/demo/_constants/constants";
 import Model500Icon from "@/Icon/model500Icon";
 import { Notification } from "@/components/ui/Notification";
-import { ModelSelector } from "@/components/ModelSelector";
 import { TabsComponent } from "@/app/demo/_component/TabsComponent";
 
 export default function CameraFeed() {

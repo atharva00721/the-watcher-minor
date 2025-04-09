@@ -42,8 +42,6 @@ export function TabsComponent({
   processedFrames,
   isCapturing,
   maxDisplayFrames = 16,
-  showReports,
-  setShowReports,
   violenceReports,
   actualViolence,
   falsePositives,

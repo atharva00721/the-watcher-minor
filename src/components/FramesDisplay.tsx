@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 interface FramesDisplayProps {
   originalFrames: string[];
@@ -44,7 +45,7 @@ export function FramesDisplay({
       </div>
 
       <Separator />
-      
+
       <Tabs defaultValue="split" className="w-full">
         <div className="px-4 pt-2">
           <TabsList className="grid w-full grid-cols-3">
@@ -53,28 +54,37 @@ export function FramesDisplay({
             <TabsTrigger value="processed">Processed</TabsTrigger>
           </TabsList>
         </div>
-        
+
         <TabsContent value="split" className="mt-2">
           <div className="flex flex-col md:flex-row">
             <div className="flex-1 p-4">
-              <h4 className="text-sm font-medium mb-3 text-muted-foreground">Original Frames</h4>
+              <h4 className="text-sm font-medium mb-3 text-muted-foreground">
+                Original Frames
+              </h4>
               <ScrollArea className="h-[320px] rounded-md">
                 <div className="grid grid-cols-2 gap-2">
-                  {originalFrames.slice(0, maxDisplayFrames).map((frame, index) => (
-                    <div
-                      key={`orig-${index}`}
-                      className={`aspect-video bg-muted/30 p-1 rounded-lg overflow-hidden cursor-pointer transition-all ${
-                        selectedFrame === index ? "ring-2 ring-primary" : "hover:bg-muted/50"
-                      }`}
-                      onClick={() => handleFrameClick(index)}
-                    >
-                      <img
-                        src={frame}
-                        alt={`Captured frame ${index + 1}`}
-                        className="rounded-md w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
+                  {originalFrames
+                    .slice(0, maxDisplayFrames)
+                    .map((frame, index) => (
+                      <div
+                        key={`orig-${index}`}
+                        className={`aspect-video bg-muted/30 p-1 rounded-lg overflow-hidden cursor-pointer transition-all ${
+                          selectedFrame === index
+                            ? "ring-2 ring-primary"
+                            : "hover:bg-muted/50"
+                        }`}
+                        onClick={() => handleFrameClick(index)}
+                      >
+                        <div className="relative w-full h-full">
+                          <Image
+                            src={frame}
+                            alt={`Captured frame ${index + 1}`}
+                            fill
+                            className="rounded-md object-cover"
+                          />
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </ScrollArea>
             </div>
@@ -83,30 +93,39 @@ export function FramesDisplay({
             <Separator className="md:hidden my-2" />
 
             <div className="flex-1 p-4">
-              <h4 className="text-sm font-medium mb-3 text-muted-foreground">Preprocessed Frames</h4>
+              <h4 className="text-sm font-medium mb-3 text-muted-foreground">
+                Preprocessed Frames
+              </h4>
               <ScrollArea className="h-[320px] rounded-md">
                 <div className="grid grid-cols-2 gap-2">
-                  {processedFrames.slice(0, maxDisplayFrames).map((frame, index) => (
-                    <div
-                      key={`proc-${index}`}
-                      className={`aspect-video bg-muted/30 p-1 rounded-lg overflow-hidden cursor-pointer transition-all ${
-                        selectedFrame === index ? "ring-2 ring-primary" : "hover:bg-muted/50"
-                      }`}
-                      onClick={() => handleFrameClick(index)}
-                    >
-                      <img
-                        src={frame}
-                        alt={`Preprocessed frame ${index + 1}`}
-                        className="rounded-md w-full h-full object-contain"
-                      />
-                    </div>
-                  ))}
+                  {processedFrames
+                    .slice(0, maxDisplayFrames)
+                    .map((frame, index) => (
+                      <div
+                        key={`proc-${index}`}
+                        className={`aspect-video bg-muted/30 p-1 rounded-lg overflow-hidden cursor-pointer transition-all ${
+                          selectedFrame === index
+                            ? "ring-2 ring-primary"
+                            : "hover:bg-muted/50"
+                        }`}
+                        onClick={() => handleFrameClick(index)}
+                      >
+                        <div className="relative w-full h-full">
+                          <Image
+                            src={frame}
+                            alt={`Preprocessed frame ${index + 1}`}
+                            fill
+                            className="rounded-md object-contain"
+                          />
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </ScrollArea>
             </div>
           </div>
         </TabsContent>
-        
+
         <TabsContent value="original" className="mt-0 p-4">
           <ScrollArea className="h-[400px] rounded-md">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -114,21 +133,26 @@ export function FramesDisplay({
                 <div
                   key={`orig-full-${index}`}
                   className={`aspect-video bg-muted/30 p-1 rounded-lg overflow-hidden cursor-pointer transition-all ${
-                    selectedFrame === index ? "ring-2 ring-primary" : "hover:bg-muted/50"
+                    selectedFrame === index
+                      ? "ring-2 ring-primary"
+                      : "hover:bg-muted/50"
                   }`}
                   onClick={() => handleFrameClick(index)}
                 >
-                  <img
-                    src={frame}
-                    alt={`Captured frame ${index + 1}`}
-                    className="rounded-md w-full h-full object-cover"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={frame}
+                      alt={`Captured frame ${index + 1}`}
+                      fill
+                      className="rounded-md object-cover"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
           </ScrollArea>
         </TabsContent>
-        
+
         <TabsContent value="processed" className="mt-0 p-4">
           <ScrollArea className="h-[400px] rounded-md">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -136,15 +160,20 @@ export function FramesDisplay({
                 <div
                   key={`proc-full-${index}`}
                   className={`aspect-video bg-muted/30 p-1 rounded-lg overflow-hidden cursor-pointer transition-all ${
-                    selectedFrame === index ? "ring-2 ring-primary" : "hover:bg-muted/50"
+                    selectedFrame === index
+                      ? "ring-2 ring-primary"
+                      : "hover:bg-muted/50"
                   }`}
                   onClick={() => handleFrameClick(index)}
                 >
-                  <img
-                    src={frame}
-                    alt={`Preprocessed frame ${index + 1}`}
-                    className="rounded-md w-full h-full object-contain"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={frame}
+                      alt={`Preprocessed frame ${index + 1}`}
+                      fill
+                      className="rounded-md object-contain"
+                    />
+                  </div>
                 </div>
               ))}
             </div>

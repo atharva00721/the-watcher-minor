@@ -7,12 +7,9 @@ import { InferenceSession } from "onnxruntime-web";
 import { captureVideoFrame } from "@/lib/frameCapture";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { runInference, InferenceResult } from "@/lib/inference";
 import { Progress } from "@/components/ui/progress";
 import { ViolenceReport } from "@/lib/gemini";
-import { ViolenceReportsList } from "@/components/ViolenceReportsList";
 import { AlertCircle, Clock, Loader2 } from "lucide-react";
 import { processAndAlertIfNeeded } from "@/lib/alertManager";
 import {
@@ -41,7 +38,6 @@ export default function CameraFeed() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   // UI state
-  const [showFrames, setShowFrames] = useState(false);
   const [showReports, setShowReports] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 

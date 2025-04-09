@@ -63,7 +63,7 @@ export async function generateViolenceReport(
     }
 
     // Use updated frame selection with threshold.
-    const frameSubset = selectRepresentativeFrames(frames, confidenceScores, 4);
+    const frameSubset = selectRepresentativeFrames(frames, confidenceScores, 8);
 
     // Directly map frames to Gemini-compatible format.
     const imageParts = frameSubset.map((frame) => ({

@@ -59,4 +59,23 @@ export const modelData = [
     logo: modelBiLSTMIcon,
     modelPath: "/models/bilstm.onnx",
   },
+  {
+    id: "arvie-mobilenet-v3", // Unique ID for the new model
+    name: "Arvie MobileNetV3 (Beta)",
+    title: "Violence Detection",
+    description:
+      "Advanced MobileNetV3-based model for detecting violent patterns and aggressive behavior",
+    status: "MobileNetV3Small",
+    zones: 4,
+    latency: "38ms",
+    accuracy: "89%",
+    evaluation: {
+      precision: "89%",
+      recall: "89%",
+      f1Score: "89%",
+    },
+    lastUpdated: "Just now",
+    logo: Model500Icon,
+    modelPath: "/models/model50kv3.onnx",
+  },
 ];

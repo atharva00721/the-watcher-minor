@@ -1,5 +1,5 @@
 import { generateViolenceReport, type ViolenceReport } from "./gemini";
-import { sendTelegramAlert } from "./sendTelegramAlert";
+import { sendTelegramAlert, sendImmediateAlert } from "./sendTelegramAlert";
 
 /**
  * Process frames from surveillance, generate a violence report, and send alert if necessary
@@ -9,6 +9,24 @@ export async function processAndAlertIfNeeded(
   confidenceScores: number[]
 ): Promise<{ report: ViolenceReport | null; alertSent: boolean }> {
   try {
+    // If confidence scores indicate violence, send an immediate alert
+    const hasHighConfidence = confidenceScores.some((score) => score >= 0.8);
+
+    if (hasHighConfidence) {
+      console.log(
+        "Potential violence detected - sending immediate alert with key images..."
+      );
+      const immediateResult = await sendImmediateAlert(frames);
+
+      if (!immediateResult.success) {
+        console.error(
+          `Failed to send immediate alert: ${immediateResult.error}`
+        );
+      } else {
+        console.log("Immediate alert sent successfully!");
+      }
+    }
+
     // Generate the violence report using Gemini
     console.log(`Generating violence report from ${frames.length} frames...`);
     const report = await generateViolenceReport(frames, confidenceScores);
@@ -24,25 +42,29 @@ export async function processAndAlertIfNeeded(
       );
     }
 
-    // Only send alerts for actual violence or high severity incidents
+    // Only send detailed alerts for actual violence or high severity incidents
     if (report.isActualViolence || report.severity === "high") {
-      console.log(`Violence detected - sending alert...`);
+      console.log(
+        `Violence confirmed - sending detailed report without images...`
+      );
       const result = await sendTelegramAlert(report);
 
       if (!result.success) {
-        console.error(`Failed to send alert: ${result.error}`);
+        console.error(`Failed to send detailed report: ${result.error}`);
       } else {
-        console.log(`Alert sent successfully!`);
+        console.log(`Detailed report sent successfully!`);
       }
 
-      return { report, alertSent: result.success };
+      return { report, alertSent: result.success || hasHighConfidence };
     } else {
       console.log(
-        `No actual violence detected (${report.severity} severity) - skipping alert`
+        `No actual violence detected (${report.severity} severity) - skipping detailed alert`
       );
+      // If we sent an immediate alert but the report concludes no violence,
+      // we could potentially send a follow-up "all clear" message here
     }
 
-    return { report, alertSent: false };
+    return { report, alertSent: hasHighConfidence };
   } catch (error) {
     console.error("Error in processAndAlertIfNeeded:", error);
     return { report: null, alertSent: false };

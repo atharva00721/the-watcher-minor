@@ -33,7 +33,7 @@ export default function CameraFeed() {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [modelUrl, setModelUrl] = useState("/models/500model.onnx");
+  const [modelUrl, setModelUrl] = useState("/models/model50kv3.onnx");
   const [session, setSession] = useState<typeof InferenceSession | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -202,7 +202,7 @@ export default function CameraFeed() {
       // Run inference
       if (session && processCanvas) {
         try {
-          const result = await runInference(processCanvas, session);
+          const result = await runInference(processCanvas, session, modelUrl);
           setInferenceResult(result);
 
           // Check for violence
@@ -225,7 +225,7 @@ export default function CameraFeed() {
     } finally {
       setIsProcessing(false);
     }
-  }, [session, handleViolenceDetection]);
+  }, [session, handleViolenceDetection, modelUrl]);
 
   // Report generation effect
   useEffect(() => {

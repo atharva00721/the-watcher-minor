@@ -6,8 +6,11 @@ export interface TelegramResponse {
   error?: string;
 }
 
-export async function sendTelegramAlert(
-  report: ViolenceReport
+/**
+ * Sends an immediate alert message when violence is detected, before the detailed report is generated
+ */
+export async function sendImmediateAlert(
+  frames?: string[]
 ): Promise<TelegramResponse> {
   try {
     const token =
@@ -15,25 +18,13 @@ export async function sendTelegramAlert(
       "8052607894:AAEXeD0I0Iw7fZbsSuTUj1uHpAEz5LDSDRQ";
     const chatId = process.env.TELEGRAM_CHAT_ID || "6488581574";
 
-    // Create a more detailed message with severity and recommendations
-    const severityEmoji = {
-      low: "🟡",
-      medium: "🟠",
-      high: "🔴",
-    };
-
     const message =
-      `🚨 *Violence Detected!*\n\n` +
-      `📝 *Summary:*\n${report.summary}\n\n` +
-      `${
-        severityEmoji[report.severity]
-      } *Severity:* ${report.severity.toUpperCase()}\n\n` +
-      `📋 *Details:*\n${report.details}\n\n` +
-      `🛠️ *Recommendations:*\n${report.recommendations
-        .map((r) => `• ${r}`)
-        .join("\n")}`;
-    console.log("Sending message:", message);
-    // Send the text message first
+      `🚨 *ALERT: Possible Violence Detected* 🚨\n\n` +
+      `Violence has been detected by the surveillance system.\n` +
+      `A detailed report is being generated and will be sent shortly.`;
+
+    console.log("Sending immediate alert message");
+
     const textMessageUrl = `https://api.telegram.org/bot${token}/sendMessage`;
     const textRes = await fetch(textMessageUrl, {
       method: "POST",
@@ -49,16 +40,19 @@ export async function sendTelegramAlert(
 
     const textData = await textRes.json();
     if (!textData.ok) {
-      console.error("❌ Telegram Error (text message):", textData);
-      return { success: false, error: "Failed to send text message" };
+      console.error("❌ Telegram Error (immediate alert):", textData);
+      return { success: false, error: "Failed to send immediate alert" };
     }
 
-    // Send images if available
-    if (report.frames && report.frames.length > 0) {
-      console.log(`Attempting to send ${report.frames.length} images...`);
+    // Send key images if available (max 2 images to avoid spam)
+    if (frames && frames.length > 0) {
+      console.log(`Attempting to send key images with immediate alert...`);
 
-      for (let i = 0; i < report.frames.length; i++) {
-        const frame = report.frames[i];
+      // Just send up to 2 images to avoid spamming
+      const imagesToSend = frames.slice(0, 2);
+
+      for (let i = 0; i < imagesToSend.length; i++) {
+        const frame = imagesToSend[i];
 
         try {
           // Extract base64 data from the data URL
@@ -91,6 +85,7 @@ export async function sendTelegramAlert(
 
           const blob = new Blob(byteArrays, { type: "image/jpeg" });
           formData.append("photo", blob);
+          formData.append("caption", `Evidence image ${i + 1}`);
 
           // Send photo using multipart/form-data
           const photoUrl = `https://api.telegram.org/bot${token}/sendPhoto`;
@@ -104,13 +99,77 @@ export async function sendTelegramAlert(
           if (!photoData.ok) {
             console.error(`❌ Telegram Error (photo ${i + 1}):`, photoData);
           } else {
-            console.log(`✓ Image ${i + 1} sent successfully`);
+            console.log(`✓ Initial alert image ${i + 1} sent successfully`);
           }
         } catch (imgError) {
           console.error(`❌ Failed to process image ${i + 1}:`, imgError);
         }
       }
     }
+
+    return { success: true };
+  } catch (error) {
+    console.error("❌ Immediate Alert Error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Unknown error sending immediate alert",
+    };
+  }
+}
+
+export async function sendTelegramAlert(
+  report: ViolenceReport
+): Promise<TelegramResponse> {
+  try {
+    const token =
+      process.env.TELEGRAM_BOT_TOKEN ||
+      "8052607894:AAEXeD0I0Iw7fZbsSuTUj1uHpAEz5LDSDRQ";
+    const chatId = process.env.TELEGRAM_CHAT_ID || "6488581574";
+
+    // Create a more detailed message with severity and recommendations
+    const severityEmoji = {
+      low: "🟡",
+      medium: "🟠",
+      high: "🔴",
+    };
+
+    const message =
+      `📊 *Violence Report Analysis Complete*\n\n` +
+      `📝 *Summary:*\n${report.summary}\n\n` +
+      `${
+        severityEmoji[report.severity]
+      } *Severity:* ${report.severity.toUpperCase()}\n\n` +
+      `📋 *Details:*\n${report.details}\n\n` +
+      `🛠️ *Recommendations:*\n${report.recommendations
+        .map((r) => `• ${r}`)
+        .join("\n")}`;
+
+    console.log("Sending detailed report message");
+
+    const textMessageUrl = `https://api.telegram.org/bot${token}/sendMessage`;
+    const textRes = await fetch(textMessageUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: "Markdown",
+      }),
+    });
+
+    const textData = await textRes.json();
+    if (!textData.ok) {
+      console.error("❌ Telegram Error (text message):", textData);
+      return { success: false, error: "Failed to send text message" };
+    }
+
+    // No longer sending images here since they were sent with the immediate alert
+    console.log("Detailed report sent without additional images");
 
     return { success: true };
   } catch (error) {

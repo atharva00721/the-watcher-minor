@@ -19,13 +19,13 @@ export function WatcherModelCardList() {
   return (
     <section className="pb-8">
       <div className="text-center mb-12">
-        <h2 className="doto-black text-3xl font-bold text-foreground">
+        {/* <h2 className="doto-black text-3xl font-bold text-foreground">
           Our AI Models
-        </h2>
-        <p className="text-muted-foreground">
+        </h2> */}
+        {/* <p className="text-muted-foreground">
           Explore our cutting-edge AI models designed for real-world
           applications.
-        </p>
+        </p> */}
       </div>
       <div className="flex flex-col gap-24">
         {modelData.map((model, index) => {

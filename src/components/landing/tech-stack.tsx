@@ -1,13 +1,4 @@
-import {
-  Brain,
-  Cpu,
-  Database,
-  Shield,
-  Zap,
-  Share2,
-  Server,
-  FileCode,
-} from "lucide-react";
+import { Brain, Zap, Server } from "lucide-react";
 
 export default function TechStack() {
   return (

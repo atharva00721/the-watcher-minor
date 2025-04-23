@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { AnimatedBeam } from "../magicui/animated-beam";
+
 
 const Hero = () => {
   return (

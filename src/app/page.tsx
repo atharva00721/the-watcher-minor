@@ -4,7 +4,6 @@ import {
   Cpu,
   Brain,
   BarChart3,
-  ArrowRight,
   Activity,
   Shield,
   Clock,
@@ -17,7 +16,6 @@ import TechStack from "@/components/landing/tech-stack";
 import { VideoPreprocessingFlow } from "@/components/landing/flow";
 import Hero from "@/components/landing/hero";
 import Footer from "@/components/landing/footer";
-import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
@@ -108,7 +106,7 @@ export default function Home() {
                       Custom Configuration
                     </h3>
                     <p className="text-muted-foreground">
-                      We configure The Watcher's ML models to your specific
+                      We configure The Watcher&apos;s ML models to your specific
                       security needs and environment.
                     </p>
                   </div>
@@ -123,7 +121,7 @@ export default function Home() {
                     </h3>
                     <p className="text-muted-foreground">
                       Seamless installation followed by a training period where
-                      The Watcher learns your environment's normal patterns.
+                      The Watcher learns your environment&apos;s normal patterns.
                     </p>
                   </div>
                 </div>

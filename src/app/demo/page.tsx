@@ -5,7 +5,7 @@ import CameraFeed from "@/components/CameraFeed";
 import { ModeToggle } from "@/components/modetoggle";
 import { TelegramChatIdModal } from "@/components/telegram-chat-id-modal";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, BellRing } from "lucide-react";
+import { BellRing } from "lucide-react";
 import { toast } from "sonner";
 
 export default function LivePage() {
@@ -96,7 +96,7 @@ export default function LivePage() {
         <CameraFeed onBeforeCameraStart={handleChatIdCheck} />
       </div>
 
-      <div className="mt-8 bg-card/50 border border-border rounded-lg p-6 max-w-xl mx-auto">
+      {/* <div className="mt-8 bg-card/50 border border-border rounded-lg p-6 max-w-xl mx-auto">
         <div className="flex items-center gap-2 mb-3">
           <BellRing className="h-4 w-4 text-muted-foreground" />
           <h2 className="text-base font-medium">
@@ -113,7 +113,7 @@ export default function LivePage() {
             <li>System requires your attention</li>
           </ul>
         </div>
-      </div>
+      </div> */}
     </main>
   );
 }

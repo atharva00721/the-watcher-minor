@@ -9,7 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -202,7 +201,7 @@ export function TelegramChatIdModal({
                   variant="ghost"
                   className="text-sm text-muted-foreground"
                 >
-                  I've opened the bot
+                  I opened the bot
                 </Button>
               </div>
             </div>
@@ -303,7 +302,8 @@ export function TelegramChatIdModal({
                   {!chatId && (
                     <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-1.5">
                       <AlertCircle className="h-3 w-3" />
-                      Copy the Chat ID from bot's response and paste it here
+                      Copy the Chat ID from bot&apos;s response and paste it
+                      here
                     </p>
                   )}
                 </div>

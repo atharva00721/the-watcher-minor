@@ -23,7 +23,13 @@ import Model500Icon from "@/Icon/model500Icon";
 import { Notification } from "@/components/ui/Notification";
 import { TabsComponent } from "@/app/demo/_component/TabsComponent";
 
-export default function CameraFeed() {
+interface CameraFeedProps {
+  onBeforeCameraStart?: () => boolean;
+}
+
+export default function CameraFeed({
+  onBeforeCameraStart,
+}: CameraFeedProps = {}) {
   // DOM References
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -73,6 +79,12 @@ export default function CameraFeed() {
   // Camera control functions
   const startCamera = useCallback(async () => {
     try {
+      // Check if we should proceed with starting the camera
+      if (onBeforeCameraStart && !onBeforeCameraStart()) {
+        console.log("Camera start prevented by onBeforeCameraStart callback");
+        return;
+      }
+
       setErrorMessage(null);
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -91,7 +103,7 @@ export default function CameraFeed() {
       console.error("Camera access denied:", err);
       setErrorMessage("Camera access denied. Please check permissions.");
     }
-  }, []);
+  }, [onBeforeCameraStart]);
 
   const stopCamera = useCallback(() => {
     if (stream) {

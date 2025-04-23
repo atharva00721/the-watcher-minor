@@ -7,6 +7,20 @@ export interface TelegramResponse {
 }
 
 /**
+ * Gets the Telegram chat ID from session storage or falls back to environment variable
+ */
+function getChatId(): string {
+  // For client-side (browser) context
+  if (typeof window !== "undefined") {
+    const sessionChatId = sessionStorage.getItem("telegram_chat_id");
+    if (sessionChatId) return sessionChatId;
+  }
+
+  // Fallback to environment variable
+  return process.env.TELEGRAM_CHAT_ID || "6488581574";
+}
+
+/**
  * Sends an immediate alert message when violence is detected, before the detailed report is generated
  */
 export async function sendImmediateAlert(
@@ -16,7 +30,7 @@ export async function sendImmediateAlert(
     const token =
       process.env.TELEGRAM_BOT_TOKEN ||
       "8052607894:AAEXeD0I0Iw7fZbsSuTUj1uHpAEz5LDSDRQ";
-    const chatId = process.env.TELEGRAM_CHAT_ID || "6488581574";
+    const chatId = getChatId();
 
     const message =
       `🚨 *ALERT: Possible Violence Detected* 🚨\n\n` +
@@ -127,7 +141,7 @@ export async function sendTelegramAlert(
     const token =
       process.env.TELEGRAM_BOT_TOKEN ||
       "8052607894:AAEXeD0I0Iw7fZbsSuTUj1uHpAEz5LDSDRQ";
-    const chatId = process.env.TELEGRAM_CHAT_ID || "6488581574";
+    const chatId = getChatId();
 
     // Create a more detailed message with severity and recommendations
     const severityEmoji = {

@@ -167,7 +167,7 @@ export function TelegramChatIdModal({
                   </p>
                 </div>
                 <a
-                  href="https://t.me/YourBot"
+                  href="https://t.me/userinfobot"
                   target="_blank"
                   className="ml-auto bg-foreground hover:bg-foreground/90 text-background py-1.5 px-3 rounded-md text-sm transition-colors font-medium flex items-center gap-1.5"
                   onClick={() => setTimeout(() => setStep(2), 500)}

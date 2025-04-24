@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import CameraFeed from "@/components/CameraFeed";
 import { ModeToggle } from "@/components/modetoggle";
 import { TelegramChatIdModal } from "@/components/telegram-chat-id-modal";
-import { Button } from "@/components/ui/button";
 import { BellRing } from "lucide-react";
 import { toast } from "sonner";
 
@@ -49,47 +48,46 @@ export default function LivePage() {
 
   return (
     <main className="p-6">
-      <nav className="w-[70%] p-4 bg-gradient-to-r from-zinc-300/70 to-zinc-300/70 dark:from-zinc-800/70 dark:to-zinc-800/30 backdrop-blur-lg border border-zinc-300/50 dark:border-zinc-700/50 flex justify-between items-center rounded-xl shadow-2xl absolute top-5 left-1/2 -translate-x-1/2 z-[9999]">
-        <div className="flex items-baseline">
-          <h1 className="text-2xl doto-black text-glowtracking-widest text-primary glow-text">
-            The Watcher
+      <nav className="w-[90%] xs:w-[85%] sm:w-[80%] md:w-[75%] lg:w-[95%] p-2 xs:p-2.5 sm:p-3 md:p-4 flex justify-between items-center rounded-lg transition-all duration-300 mx-auto">
+        <div className="flex items-baseline space-x-1.5 sm:space-x-2">
+          <h1 className="font-sans font-extrabold text-lg sm:text-xl md:text-2xl lg:text-5xl tracking-tight text-primary glow-text">
+            THE WATCHER
           </h1>
-          <span className="jetbrains-mono h-fit text-xs font-light tracking-tight text-muted-light duration-200 group-hover:text-white">
+          <span className="jetbrains-mono h-fit text-xxs md:text-xs font-light tracking-tight text-muted-light duration-200 group-hover:text-white hidden sm:inline-flex">
             <span>/ </span>
             <span className="text-xxs">@</span>
             <span>demo</span>
           </span>
         </div>
-        <div className="flex gap-2 items-center">
-          <TelegramChatIdModal
+        <div className="flex gap-1 xs:gap-1.5 sm:gap-2 md:gap-3 items-center">
+          {/* <TelegramChatIdModal
             isOpen={showTelegramModal}
             setIsOpen={setShowTelegramModal}
             onSave={() => setIsTelegramConfigured(true)}
-          />
+          /> */}
           <ModeToggle />
         </div>
       </nav>
 
-      <div className="mt-20">
+      <div className="mt-5">
         {/* Sleek minimal notification for Telegram connection */}
         {!isTelegramConfigured && (
-          <div className="mb-6 flex justify-center">
+          <div className="mb-6 flex w-full justify-center">
             <div
               onClick={() => setShowTelegramModal(true)}
-              className="bg-background/50 backdrop-blur-sm px-4 py-2.5 rounded-full border border-border/50 shadow-sm hover:shadow-md transition-all flex items-center gap-3 cursor-pointer group"
+              className="bg-muted/50 backdrop-blur-sm px-4 py-2.5 rounded-full border border-border/50 shadow-sm hover:shadow-md transition-all flex items-center justify-between gap-3 cursor-pointer w-full group"
             >
-              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-              <span className="text-sm text-foreground/80">
-                Telegram connection required
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="py-1 h-auto opacity-60 group-hover:opacity-100 transition-opacity"
-              >
-                <BellRing className="h-3.5 w-3.5 mr-1" />
-                Connect
-              </Button>
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-2  bg-blue-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-foreground/80">
+                  Telegram connection required
+                </span>
+              </div>
+              <TelegramChatIdModal
+                isOpen={showTelegramModal}
+                setIsOpen={setShowTelegramModal}
+                onSave={() => setIsTelegramConfigured(true)}
+              />
             </div>
           </div>
         )}

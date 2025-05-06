@@ -27,7 +27,7 @@ export const modelData = [
     title: "Violence Detection",
     description:
       "ONNX-based model trained on 1000 curated violent/non-violent clips",
-    status: "YOLOv8 + MobileNetV2",
+    status: "MobileNetV2",
     zones: 8,
     latency: "35ms",
     accuracy: "94%",
